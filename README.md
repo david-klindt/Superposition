@@ -1,25 +1,7 @@
-# QUANTIFYING POLYSEMANTICITY IN CONVOLUTIONAL NEURAL NETWORKS
+Code for https://arxiv.org/abs/2310.11431
 
-A recent hypothesis suggests that neural networks represent semantically mean-
-ingful input patterns (i.e., features) not with individual neurons but in superposi-
-tion. Theory suggests that this may be an advantageous encoding strategy when
-features are sparse, however, empirical evidence in support of the theory has so
-far been limited to language models. Here, we propose a framework for study-
-ing feature superposition (i.e., polysemanticity) in convolutional neural networks
-(CNNs) that process natural images. Our quantitative metric is closely inspired
-by recent psychophysical experiments that operationalize semantics through hu-
-man perceptual judgements. We rigorously study the statistical assumptions and
-philosophical implications behind these measures and discuss how they evolve
-across the hierarchy of visual processing. Equipped with these new methods, we
-do indeed find polysemantic neurons in CNNs, confirming prior work. We then
-directly test the superposition hypothesis by simple k-Means clustering in activa-
-tion space. This approach yields clusters of activity that are more monosemantic
-than individual neurons, confirming the existence of monosemantic features in su-
-perposition. We show how this corresponds to sparse activation on the natural
-image manifold, how this interacts with lower level features such as colour, and
-higher level features such as object category. Moreover, in an effort of mechanis-
-tic interpretability, we discover pairs of neurons with feature synergy, i.e., sparse
-combinations in activation space that yield more monosemantic features than ei-
-ther of the constituent parts. These results have implications for neural network
-interpretability, system identifiabiltiy, and more broadly for the representations in
-neural systems.
+# Identifying Interpretable Visual Features in Artificial and Biological Neural Systems
+
+David Klindt, Sophia Sanborn, Francisco Acosta, Frédéric Poitevin, Nina Miolane
+
+Single neurons in neural networks are often interpretable in that they represent individual, intuitively meaningful features. However, many neurons exhibit mixed selectivity, i.e., they represent multiple unrelated features. A recent hypothesis proposes that features in deep networks may be represented in superposition, i.e., on non-orthogonal axes by multiple neurons, since the number of possible interpretable features in natural data is generally larger than the number of neurons in a given network. Accordingly, we should be able to find meaningful directions in activation space that are not aligned with individual neurons. Here, we propose (1) an automated method for quantifying visual interpretability that is validated against a large database of human psychophysics judgments of neuron interpretability, and (2) an approach for finding meaningful directions in network activation space. We leverage these methods to discover directions in convolutional neural networks that are more intuitively meaningful than individual neurons, as we confirm and investigate in a series of analyses. Moreover, we apply the same method to three recent datasets of visual neural responses in the brain and find that our conclusions largely transfer to real neural data, suggesting that superposition might be deployed by the brain. This also provides a link with disentanglement and raises fundamental questions about robust, efficient and factorized representations in both artificial and biological neural systems. 
