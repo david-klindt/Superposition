@@ -1,46 +1,56 @@
-import torch
 import numpy as np
 import matplotlib.pyplot as plt
 from sklearn.linear_model import LinearRegression
 from sklearn.cluster import MiniBatchKMeans
 
 
-def compute_kmeans(data: np.ndarray, num_dic: int, seed: int = 42,
-                   normalized: bool = True, align: bool = False) -> tuple:
+def normalize(data, tol=1e-6):
+    data = data.copy()
+    norms = np.sqrt((data ** 2).sum(axis=1))[:, None].clip(min=tol)
+    return data / norms
+
+
+def compute_kmeans(data_train: np.ndarray, data_test: np.ndarray, num_dic: int, seed: int = 42,
+                   normalized: bool = True, align: bool = False, distances: bool = False) -> tuple:
     """
     This function computes k-means clustering on the input data and returns the kmeans object and distances.
 
     Parameters:
-    data (np.ndarray): The input data (samples x features) for clustering. 
+    data train (np.ndarray): The input data (samples x features) for clustering. 
+    data test (np.ndarray): The input data (samples x features) for psychophysics. 
     num_dic (int): The number of clusters to form.
     seed (int, optional): The seed for the random number generator. Defaults to 42.
     normalized (bool, optional): Whether to normalize the data to unit norm, i.e., cluster cosine similarities.
     align (bool, optional): Whether to initialize the centroids as the neurons.
+    distances (bool, optional): Whether to use kmeans distances instead of projections.
 
     Returns:
     tuple: A tuple containing the kmeans object, distances and projections.
     """
-    if align and num_dic == data.shape[1]:
+    if align and num_dic == data_train.shape[1]:
         print('try to align with neurons, init as eye')
         init = np.eye(num_dic)
-        n_init = 1
+        #n_init = 1
     else:
         init = 'k-means++'
-        n_init = 100,
+        #n_init = 10
     if normalized:
-        data = data.copy()
-        norms = np.sqrt((data ** 2).sum(axis=1))[:, None].clip(min=1e-6)
-        data = data / norms
+        data_train = normalize(data_train)
+        data_test = normalize(data_test)
     kmeans = MiniBatchKMeans(
         n_clusters=num_dic,
         random_state=seed,
-        n_init=n_init,
+        #n_init=n_init,
         verbose=False,
         init=init,
-    ).fit(data)
-    distances = kmeans.transform(data)
-    projections = data @ kmeans.cluster_centers_.T
-    return kmeans, distances, projections
+    ).fit(data_train)
+    if distances:
+        activations_train = - kmeans.transform(data_train)  # distances_train
+        activations_test = - kmeans.transform(data_test)  # distances_test
+    else:
+        activations_train = data_train @ kmeans.cluster_centers_.T  # projections_train
+        activations_test = data_test @ kmeans.cluster_centers_.T  # projections_test
+    return kmeans, activations_train, activations_test
 
 
 def fit_power_law(var_exp: np.ndarray, plot: bool = True) -> np.ndarray:
@@ -85,7 +95,7 @@ def fit_power_law(var_exp: np.ndarray, plot: bool = True) -> np.ndarray:
         return reg.coef_
     
 
-def get_svd(data: np.ndarray, filename: str, show: bool = False, compute_only: bool = False) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
+def get_svd(data: np.ndarray, filename: str, show: bool = False, compute_only: bool = False):
     """
     This function computes the singular value decomposition (SVD) of the input data.
 
